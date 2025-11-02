@@ -1,7 +1,7 @@
 {
-  "name": "verdant-nodejs-api",
+  "name": "verdant-api",
   "version": "1.0.0",
-  "description": "Node.js API service for Verdant lawncare platform",
+  "description": "API service for Verdant lawncare platform (Node.js + Python)",
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/server.js",

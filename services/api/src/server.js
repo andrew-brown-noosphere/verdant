@@ -19,6 +19,8 @@ const { rateLimiter } = require('./middleware/rateLimiter');
 // Import routes
 const customerRoutes = require('./routes/customers');
 const leadRoutes = require('./routes/leads');
+const pipelineRoutes = require('./routes/pipeline');
+const territoryRoutes = require('./routes/territory');
 const propertyRoutes = require('./routes/properties');
 const jobRoutes = require('./routes/jobs');
 const paymentRoutes = require('./routes/payments');
@@ -71,6 +73,8 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/v1/customers', customerRoutes);
 app.use('/api/v1/leads', leadRoutes);
+app.use('/api/v1/pipeline', pipelineRoutes);
+app.use('/api/v1/territory', territoryRoutes);
 app.use('/api/v1/properties', propertyRoutes);
 app.use('/api/v1/jobs', jobRoutes);
 app.use('/api/v1/payments', paymentRoutes);

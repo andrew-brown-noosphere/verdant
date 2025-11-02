@@ -4,15 +4,15 @@
   "description": "AI-powered lawncare and landscaping business platform with Node.js + FastAPI",
   "private": true,
   "workspaces": [
-    "services/nodejs-api",
-    "services/python-ai-api"
+    "services/api"
   ],
   "scripts": {
-    "dev": "concurrently \"npm run dev:nodejs\" \"npm run dev:python\"",
-    "dev:nodejs": "cd services/nodejs-api && npm run dev",
-    "dev:python": "cd services/python-ai-api && ./venv/bin/uvicorn main:app --reload --port 8000",
-    "install:all": "npm install && cd services/nodejs-api && npm install && cd ../python-ai-api && python -m venv venv && ./venv/bin/pip install -r requirements.txt",
-    "setup:python": "cd services/python-ai-api && python -m venv venv && ./venv/bin/pip install -r requirements.txt"
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:node\" \"npm run dev:python\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:node": "cd services/api && npm run dev",
+    "dev:python": "cd services/api/python && ./venv/bin/uvicorn main:app --reload --port 8000",
+    "install:all": "npm install && cd services/api && npm install && cd ../api/python && python -m venv venv && ./venv/bin/pip install -r requirements.txt && cd ../../frontend && npm install",
+    "setup:python": "cd services/api/python && python -m venv venv && ./venv/bin/pip install -r requirements.txt"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

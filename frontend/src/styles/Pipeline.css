@@ -1,0 +1,175 @@
+/* PIPELINE VISUALIZATION STYLES */
+
+.pipeline-page {
+  max-width: 1400px;
+}
+
+.pipeline-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background: white;
+  padding: 1.25rem;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid var(--primary);
+}
+
+.metric-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.metric-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Pipeline Board */
+.pipeline-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
+.pipeline-stage {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-top: 4px solid var(--primary);
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.stage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.stage-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.stage-count {
+  background: var(--background);
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+.stage-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.stage-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stage-stat .stat-label {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.stage-stat .stat-value {
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Lead Cards */
+.lead-cards {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 200px;
+}
+
+.mock-message {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-muted);
+  background: var(--background);
+  border-radius: 8px;
+  border: 2px dashed var(--border);
+}
+
+.empty-stage {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* Pipeline Explanation */
+.pipeline-explanation {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.explanation-section h3 {
+  font-size: 1.125rem;
+  margin-bottom: 0.75rem;
+  color: var(--primary);
+}
+
+.explanation-section p {
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.explanation-section ol,
+.explanation-section ul {
+  margin-left: 1.5rem;
+  line-height: 1.8;
+}
+
+.explanation-section li {
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.explanation-section li strong {
+  color: var(--primary);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .pipeline-board {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .pipeline-board {
+    grid-template-columns: 1fr;
+  }
+
+  .pipeline-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
