@@ -1,0 +1,23 @@
+{
+  "name": "verdant-lawncare-platform",
+  "version": "1.0.0",
+  "description": "AI-powered lawncare and landscaping business platform with Node.js + FastAPI",
+  "private": true,
+  "workspaces": [
+    "services/nodejs-api",
+    "services/python-ai-api"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:nodejs\" \"npm run dev:python\"",
+    "dev:nodejs": "cd services/nodejs-api && npm run dev",
+    "dev:python": "cd services/python-ai-api && ./venv/bin/uvicorn main:app --reload --port 8000",
+    "install:all": "npm install && cd services/nodejs-api && npm install && cd ../python-ai-api && python -m venv venv && ./venv/bin/pip install -r requirements.txt",
+    "setup:python": "cd services/python-ai-api && python -m venv venv && ./venv/bin/pip install -r requirements.txt"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
