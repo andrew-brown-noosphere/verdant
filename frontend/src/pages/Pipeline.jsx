@@ -26,8 +26,8 @@ export default function Pipeline() {
     return (
       <div className="error">
         <strong>Error loading pipeline:</strong> {error.message}
-        <p style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}>
-          Make sure the Node.js API is running and database migrations are applied.
+        <p className="helper-text">
+          Ensure the API is running and migrations have been applied, then refresh.
         </p>
       </div>
     );
@@ -53,25 +53,19 @@ export default function Pipeline() {
         </div>
         <div className="metric-card">
           <div className="metric-label">Active</div>
-          <div className="metric-value" style={{ color: '#3b82f6' }}>
-            {metrics.active_leads || 0}
-          </div>
+          <div className="metric-value metric-value--accent">{metrics.active_leads || 0}</div>
         </div>
         <div className="metric-card">
           <div className="metric-label">Won</div>
-          <div className="metric-value" style={{ color: '#22c55e' }}>
-            {metrics.won_leads || 0}
-          </div>
+          <div className="metric-value metric-value--success">{metrics.won_leads || 0}</div>
         </div>
         <div className="metric-card">
           <div className="metric-label">Conversion Rate</div>
-          <div className="metric-value" style={{ color: '#8b5cf6' }}>
-            {metrics.conversion_rate || 0}%
-          </div>
+          <div className="metric-value metric-value--accent">{metrics.conversion_rate || 0}%</div>
         </div>
         <div className="metric-card">
           <div className="metric-label">Pipeline Value</div>
-          <div className="metric-value" style={{ color: '#f59e0b' }}>
+          <div className="metric-value metric-value--accent">
             ${metrics.total_pipeline_value || 0}
           </div>
         </div>
@@ -121,8 +115,7 @@ export default function Pipeline() {
 
             {stage.lead_count > 0 && (
               <button
-                className="btn btn-secondary"
-                style={{ width: '100%', marginTop: '0.5rem', fontSize: '0.875rem' }}
+                className="btn btn-ghost btn-compact"
                 onClick={() => alert(`Would show leads in ${stage.display_name} stage`)}
               >
                 View Leads
@@ -133,8 +126,8 @@ export default function Pipeline() {
       </div>
 
       {/* Pipeline Explanation */}
-      <div className="card" style={{ marginTop: '2rem' }}>
-        <h2>📊 How the Pipeline Works</h2>
+      <div className="card">
+        <h2 className="section-title">How the Pipeline Works</h2>
         <div className="pipeline-explanation">
           <div className="explanation-section">
             <h3>Stage Progression</h3>
@@ -176,24 +169,24 @@ export default function Pipeline() {
       </div>
 
       {/* Quick Actions */}
-      <div className="card" style={{ marginTop: '1.5rem' }}>
-        <h2>🎯 Quick Actions</h2>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+      <div className="card">
+        <h2 className="section-title">Quick Actions</h2>
+        <div className="quick-actions">
           <button
-            className="btn btn-primary"
             onClick={() => alert('Would open form to add new lead')}
+            className="btn btn-primary"
           >
-            + Add New Lead
+            Add New Lead
           </button>
           <button
-            className="btn btn-secondary"
             onClick={() => alert('Would show leads needing follow-up')}
+            className="btn btn-secondary"
           >
             View Stale Leads
           </button>
           <button
-            className="btn btn-secondary"
             onClick={() => alert('Would show pipeline analytics')}
+            className="btn btn-secondary"
           >
             View Analytics
           </button>

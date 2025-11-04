@@ -1,318 +1,220 @@
 /**
  * AD CAMPAIGNS PAGE
  *
- * Main dashboard for viewing and managing ad campaigns
+ * Broadcast-inspired overview for managing campaign performance.
  */
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCampaigns, useDeleteCampaign } from '../hooks/useAds';
 
+const filters = [
+  { value: 'all', label: 'All' },
+  { value: 'active', label: 'Active' },
+  { value: 'draft', label: 'Draft' },
+  { value: 'paused', label: 'Paused' },
+  { value: 'completed', label: 'Completed' },
+];
+
+const formatCurrency = (value, maximumFractionDigits = 0) =>
+  new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits,
+  }).format(Number(value || 0));
+
 const Campaigns = () => {
   const [statusFilter, setStatusFilter] = useState('all');
-  const { data: campaigns, isLoading, error } = useCampaigns({ status: statusFilter !== 'all' ? statusFilter : undefined });
+  const { data: campaigns, isLoading, error } = useCampaigns({
+    status: statusFilter !== 'all' ? statusFilter : undefined,
+  });
   const deleteCampaign = useDeleteCampaign();
 
+  const summary = useMemo(() => {
+    if (!campaigns || campaigns.length === 0) {
+      return {
+        active: 0,
+        totalSpend: 0,
+        totalLeads: 0,
+        avgCPA: 0,
+      };
+    }
+
+    const active = campaigns.filter((c) => c.status === 'active').length;
+    const totalSpend = campaigns.reduce(
+      (sum, c) => sum + Number(c.budget_spent || 0),
+      0,
+    );
+    const totalLeads = campaigns.reduce(
+      (sum, c) => sum + Number(c.leads_generated || 0),
+      0,
+    );
+    const avgCPA = totalLeads > 0 ? totalSpend / totalLeads : 0;
+
+    return { active, totalSpend, totalLeads, avgCPA };
+  }, [campaigns]);
+
   const handleDelete = async (campaignId) => {
-    if (window.confirm('Are you sure you want to delete this campaign?')) {
+    if (window.confirm('Archive this campaign? You can restore it later.')) {
       try {
         await deleteCampaign.mutateAsync(campaignId);
-      } catch (error) {
-        console.error('Failed to delete campaign:', error);
+      } catch (mutationError) {
+        console.error('Failed to archive campaign:', mutationError);
       }
     }
   };
 
   if (isLoading) {
     return (
-      <div style={{ padding: '20px' }}>
-        <div>Loading campaigns...</div>
+      <div className="loading">
+        <div className="loading-spinner" />
+        <p>Loading campaigns...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div style={{ padding: '20px' }}>
-        <div style={{ color: 'red' }}>Error loading campaigns: {error.message}</div>
+      <div className="error">
+        <strong>Unable to load campaigns:</strong> {error.message}
+        <p className="helper-text">
+          Verify the marketing service is online and try again.
+        </p>
       </div>
     );
   }
 
-  // Calculate summary stats
-  const activeCampaigns = campaigns?.filter(c => c.status === 'active').length || 0;
-  const totalSpend = campaigns?.reduce((sum, c) => sum + parseFloat(c.budget_spent || 0), 0) || 0;
-  const totalLeads = campaigns?.reduce((sum, c) => sum + parseInt(c.leads_generated || 0), 0) || 0;
-  const avgCPA = totalLeads > 0 ? totalSpend / totalLeads : 0;
-
   return (
-    <div style={{ padding: '20px' }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '30px'
-      }}>
-        <h1 style={{ margin: 0 }}>Ad Campaigns</h1>
-        <Link
-          to="/campaigns/new"
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#10b981',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: '6px',
-            fontWeight: 500
-          }}
-        >
-          + New Campaign
+    <div className="page">
+      <div className="page-header">
+        <div>
+          <h1>Ad Campaigns</h1>
+          <p>Monitor and adjust each broadcast as it reaches your neighbourhoods.</p>
+        </div>
+        <Link to="/campaigns/new" className="btn btn-primary">
+          New Campaign
         </Link>
       </div>
 
-      {/* Summary Stats */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '20px',
-        marginBottom: '30px'
-      }}>
-        <div style={{
-          padding: '20px',
-          backgroundColor: 'white',
-          borderRadius: '8px',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-        }}>
-          <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '5px' }}>
-            Total Campaigns
-          </div>
-          <div style={{ fontSize: '32px', fontWeight: 'bold' }}>
-            {campaigns?.length || 0}
-          </div>
+      <div className="stats-grid">
+        <div className="stat-card">
+          <div className="stat-label">Total Campaigns</div>
+          <div className="stat-value">{campaigns?.length || 0}</div>
         </div>
-
-        <div style={{
-          padding: '20px',
-          backgroundColor: 'white',
-          borderRadius: '8px',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-        }}>
-          <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '5px' }}>
-            Active Campaigns
-          </div>
-          <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#10b981' }}>
-            {activeCampaigns}
-          </div>
+        <div className="stat-card">
+          <div className="stat-label">Active Campaigns</div>
+          <div className="stat-value">{summary.active}</div>
         </div>
-
-        <div style={{
-          padding: '20px',
-          backgroundColor: 'white',
-          borderRadius: '8px',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-        }}>
-          <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '5px' }}>
-            Total Spend
-          </div>
-          <div style={{ fontSize: '32px', fontWeight: 'bold' }}>
-            ${totalSpend.toFixed(0)}
-          </div>
+        <div className="stat-card">
+          <div className="stat-label">Total Spend</div>
+          <div className="stat-value">{formatCurrency(summary.totalSpend)}</div>
         </div>
-
-        <div style={{
-          padding: '20px',
-          backgroundColor: 'white',
-          borderRadius: '8px',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-        }}>
-          <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '5px' }}>
-            Avg CPA
-          </div>
-          <div style={{ fontSize: '32px', fontWeight: 'bold' }}>
-            ${avgCPA.toFixed(2)}
-          </div>
+        <div className="stat-card">
+          <div className="stat-label">Average CPA</div>
+          <div className="stat-value">{formatCurrency(summary.avgCPA, 2)}</div>
         </div>
       </div>
 
-      {/* Filter Bar */}
-      <div style={{
-        display: 'flex',
-        gap: '10px',
-        marginBottom: '20px',
-        padding: '15px',
-        backgroundColor: 'white',
-        borderRadius: '8px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-      }}>
-        <button
-          onClick={() => setStatusFilter('all')}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: statusFilter === 'all' ? '#3b82f6' : 'white',
-            color: statusFilter === 'all' ? 'white' : '#374151',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            cursor: 'pointer'
-          }}
-        >
-          All
-        </button>
-        <button
-          onClick={() => setStatusFilter('active')}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: statusFilter === 'active' ? '#3b82f6' : 'white',
-            color: statusFilter === 'active' ? 'white' : '#374151',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            cursor: 'pointer'
-          }}
-        >
-          Active
-        </button>
-        <button
-          onClick={() => setStatusFilter('draft')}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: statusFilter === 'draft' ? '#3b82f6' : 'white',
-            color: statusFilter === 'draft' ? 'white' : '#374151',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            cursor: 'pointer'
-          }}
-        >
-          Draft
-        </button>
-        <button
-          onClick={() => setStatusFilter('paused')}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: statusFilter === 'paused' ? '#3b82f6' : 'white',
-            color: statusFilter === 'paused' ? 'white' : '#374151',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            cursor: 'pointer'
-          }}
-        >
-          Paused
-        </button>
-        <button
-          onClick={() => setStatusFilter('completed')}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: statusFilter === 'completed' ? '#3b82f6' : 'white',
-            color: statusFilter === 'completed' ? 'white' : '#374151',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            cursor: 'pointer'
-          }}
-        >
-          Completed
-        </button>
+      <div className="filter-card">
+        {filters.map((filter) => (
+          <button
+            key={filter.value}
+            type="button"
+            className={`filter-pill${statusFilter === filter.value ? ' active' : ''}`}
+            onClick={() => setStatusFilter(filter.value)}
+          >
+            {filter.label}
+          </button>
+        ))}
       </div>
 
-      {/* Campaigns List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        {campaigns?.length === 0 ? (
-          <div style={{
-            padding: '40px',
-            backgroundColor: 'white',
-            borderRadius: '8px',
-            textAlign: 'center',
-            color: '#6b7280'
-          }}>
-            <div style={{ fontSize: '18px', marginBottom: '10px' }}>No campaigns found</div>
-            <div>Create your first AI-powered neighborhood campaign to get started</div>
-          </div>
-        ) : (
-          campaigns?.map((campaign) => (
-            <div
-              key={campaign.id}
-              style={{
-                padding: '20px',
-                backgroundColor: 'white',
-                borderRadius: '8px',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}
-            >
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                  <Link
-                    to={`/campaigns/${campaign.id}`}
-                    style={{
-                      fontSize: '18px',
-                      fontWeight: 600,
-                      color: '#111827',
-                      textDecoration: 'none'
-                    }}
-                  >
-                    {campaign.name}
+      <div className="campaign-list">
+        {campaigns && campaigns.length > 0 ? (
+          campaigns.map((campaign) => {
+            const allocated = Number(campaign.budget_allocated || 0);
+            const spent = Number(campaign.budget_spent || 0);
+            const spendPercent =
+              allocated > 0 ? Math.min(100, Math.round((spent / allocated) * 100)) : null;
+            const statusClass = `campaign-status ${campaign.status}`;
+
+            return (
+              <div className="campaign-card" key={campaign.id}>
+                <div>
+                  <div className="campaign-card__title">
+                    <h3>{campaign.name}</h3>
+                    <span className={statusClass}>{campaign.status}</span>
+                    <div className="campaign-card__meta">
+                      <span>{campaign.channel || 'Mixed media'}</span>
+                      <span>
+                        {campaign.target_neighborhoods?.length || 0} neighbourhoods
+                      </span>
+                      <span>{campaign.platforms?.join(', ') || 'Channel pending'}</span>
+                    </div>
+                  </div>
+
+                  <div className="campaign-card__stats">
+                    <div className="campaign-stat">
+                      <span>Budget</span>
+                      <strong>{formatCurrency(allocated)}</strong>
+                      <small className="helper-text">
+                        {spendPercent !== null ? `${spendPercent}% spent` : 'Awaiting spend'}
+                      </small>
+                    </div>
+                    <div className="campaign-stat">
+                      <span>Leads</span>
+                      <strong>{campaign.leads_generated || 0}</strong>
+                      <small className="helper-text">
+                        Target {campaign.target_leads || 0}
+                      </small>
+                    </div>
+                    <div className="campaign-stat">
+                      <span>CPA</span>
+                      <strong>
+                        {campaign.cpa ? formatCurrency(campaign.cpa, 2) : '—'}
+                      </strong>
+                      <small className="helper-text">
+                        Target {campaign.target_cpa ? formatCurrency(campaign.target_cpa, 2) : '—'}
+                      </small>
+                    </div>
+                    <div className="campaign-stat">
+                      <span>Last Refresh</span>
+                      <strong>
+                        {campaign.last_synced
+                          ? new Date(campaign.last_synced).toLocaleDateString()
+                          : 'Awaiting sync'}
+                      </strong>
+                      <small className="helper-text">
+                        {campaign.optimization_status || 'Optimisation pending'}
+                      </small>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="campaign-card__actions">
+                  <Link to={`/campaigns/${campaign.id}`} className="btn btn-ghost btn-compact">
+                    View Details
                   </Link>
-                  <span style={{
-                    padding: '4px 8px',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    borderRadius: '12px',
-                    backgroundColor: campaign.status === 'active' ? '#d1fae5' : '#f3f4f6',
-                    color: campaign.status === 'active' ? '#065f46' : '#374151'
-                  }}>
-                    {campaign.status}
-                  </span>
-                </div>
-                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '10px' }}>
-                  {campaign.description || 'No description'}
-                </div>
-                <div style={{ display: 'flex', gap: '20px', fontSize: '13px', color: '#6b7280' }}>
-                  <div>
-                    <strong>Budget:</strong> ${parseFloat(campaign.budget_total || 0).toFixed(0)}
-                  </div>
-                  <div>
-                    <strong>Spent:</strong> ${parseFloat(campaign.budget_spent || 0).toFixed(0)}
-                  </div>
-                  <div>
-                    <strong>Start:</strong> {campaign.start_date ? new Date(campaign.start_date).toLocaleDateString() : 'N/A'}
-                  </div>
-                  <div>
-                    <strong>Neighborhoods:</strong> {campaign.target_neighborhoods?.length || 0}
-                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-compact"
+                    onClick={() => handleDelete(campaign.id)}
+                  >
+                    Archive
+                  </button>
                 </div>
               </div>
-
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <Link
-                  to={`/campaigns/${campaign.id}`}
-                  style={{
-                    padding: '8px 16px',
-                    backgroundColor: '#3b82f6',
-                    color: 'white',
-                    textDecoration: 'none',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    fontWeight: 500
-                  }}
-                >
-                  View Details
-                </Link>
-                <button
-                  onClick={() => handleDelete(campaign.id)}
-                  style={{
-                    padding: '8px 16px',
-                    backgroundColor: 'white',
-                    color: '#ef4444',
-                    border: '1px solid #ef4444',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: 500
-                  }}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))
+            );
+          })
+        ) : (
+          <div className="empty-state">
+            <h2 className="section-title">No campaigns yet</h2>
+            <p className="section-note">
+              Create your first campaign to broadcast Verdant’s seasonal message across town.
+            </p>
+            <Link to="/campaigns/new" className="btn btn-primary">
+              Launch Campaign
+            </Link>
+          </div>
         )}
       </div>
     </div>

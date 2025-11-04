@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import './App.css';
 
 // Pages
 import Dashboard from './pages/Dashboard';
@@ -30,77 +31,62 @@ const Sidebar = () => {
   const location = useLocation();
 
   const links = [
-    { path: '/', label: 'Dashboard', icon: '📊' },
-    { path: '/customers', label: 'Customers', icon: '👥' },
-    { path: '/leads', label: 'Leads', icon: '🎯' },
-    { path: '/pipeline', label: 'Pipeline', icon: '🔄' },
-    { path: '/jobs', label: 'Jobs', icon: '🏡' },
-    { path: '/campaigns', label: 'Campaigns', icon: '📢' },
-    { path: '/analytics', label: 'Analytics', icon: '📈' },
+    { path: '/', label: 'Dashboard' },
+    { path: '/customers', label: 'Customers' },
+    { path: '/leads', label: 'Leads' },
+    { path: '/pipeline', label: 'Pipeline' },
+    { path: '/jobs', label: 'Jobs' },
+    { path: '/campaigns', label: 'Campaigns' },
+    { path: '/analytics', label: 'Analytics' },
   ];
 
+  const isActive = (path) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(path);
+  };
+
   return (
-    <div style={{
-      width: '240px',
-      backgroundColor: '#1f2937',
-      height: '100vh',
-      position: 'fixed',
-      left: 0,
-      top: 0,
-      padding: '20px',
-      color: 'white'
-    }}>
-      <h2 style={{
-        margin: '0 0 30px 0',
-        fontSize: '24px',
-        fontWeight: 'bold',
-        color: '#10b981'
-      }}>
-        🌱 Verdant
-      </h2>
+    <aside className="sidebar">
+      <div className="sidebar-brand">
+        <h1>Verdant</h1>
+        <span>Garden Broadcast</span>
+      </div>
 
       <nav>
-        {links.map((link) => (
-          <Link
-            key={link.path}
-            to={link.path}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              padding: '12px 16px',
-              marginBottom: '8px',
-              borderRadius: '8px',
-              textDecoration: 'none',
-              color: 'white',
-              backgroundColor: location.pathname === link.path ? '#374151' : 'transparent',
-              transition: 'background-color 0.2s'
-            }}
-          >
-            <span style={{ fontSize: '20px' }}>{link.icon}</span>
-            <span style={{ fontSize: '16px' }}>{link.label}</span>
-          </Link>
-        ))}
+        <ul className="nav-links">
+          {links.map((link) => {
+            const active = isActive(link.path);
+            return (
+              <li key={link.path}>
+                <Link
+                  to={link.path}
+                  className={`nav-link${active ? ' active' : ''}`}
+                  aria-current={active ? 'page' : undefined}
+                >
+                  <span className="nav-link__marker">◆</span>
+                  <span>{link.label}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
       </nav>
-    </div>
+    </aside>
   );
 };
 
-const Layout = ({ children }) => {
-  return (
-    <div style={{ display: 'flex' }}>
-      <Sidebar />
-      <div style={{
-        marginLeft: '240px',
-        flex: 1,
-        backgroundColor: '#f9fafb',
-        minHeight: '100vh'
-      }}>
+const Layout = ({ children }) => (
+  <div className="app-shell">
+    <Sidebar />
+    <main className="app-content">
+      <div className="content-inner">
         {children}
       </div>
-    </div>
-  );
-};
+    </main>
+  </div>
+);
 
 function App() {
   return (

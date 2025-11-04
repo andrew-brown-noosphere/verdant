@@ -20,8 +20,8 @@ export default function Customers() {
     return (
       <div className="error">
         <strong>Error loading customers:</strong> {error.message}
-        <p style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}>
-          Make sure the Node.js API is running on port 3001.
+        <p className="helper-text">
+          Ensure the operations API is running on port 3001 before refreshing.
         </p>
       </div>
     );
@@ -72,9 +72,7 @@ export default function Customers() {
         ) : (
           <div className="empty-state">
             <p>No customers yet. Start by adding your first customer!</p>
-            <button className="btn btn-primary" style={{ marginTop: '1rem' }}>
-              + Add First Customer
-            </button>
+            <button className="btn btn-primary">Add First Customer</button>
           </div>
         )}
       </div>

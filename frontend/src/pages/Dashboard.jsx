@@ -37,18 +37,18 @@ export default function Dashboard() {
       </div>
 
       <div className="card">
-        <h2>🚀 Quick Actions</h2>
-        <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-          <button className="btn btn-primary">+ New Customer</button>
-          <button className="btn btn-primary">+ New Lead</button>
+        <h2 className="section-title">Quick Actions</h2>
+        <div className="quick-actions">
+          <button className="btn btn-primary">Add Customer</button>
+          <button className="btn btn-primary">Add Lead</button>
           <button className="btn btn-secondary">Schedule Job</button>
         </div>
       </div>
 
       <div className="card">
-        <h2>📊 Recent Activity</h2>
-        <p style={{ color: 'var(--text-muted)', marginTop: '1rem' }}>
-          Activity feed will appear here once APIs are connected.
+        <h2 className="section-title">Recent Activity</h2>
+        <p className="section-note">
+          Activity from your crews and customers will appear here once the live data connection is enabled.
         </p>
       </div>
     </div>

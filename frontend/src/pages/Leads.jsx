@@ -22,8 +22,8 @@ export default function Leads() {
     return (
       <div className="error">
         <strong>Error loading leads:</strong> {error.message}
-        <p style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}>
-          Make sure the Node.js API is running on port 3001.
+        <p className="helper-text">
+          Confirm the Node.js API is available on port 3001 and reload the page.
         </p>
       </div>
     );
@@ -48,7 +48,7 @@ export default function Leads() {
       <div className="card">
         <div className="card-header">
           <h2>All Leads ({data?.pagination?.total || 0})</h2>
-          <button className="btn btn-primary">+ Add Lead</button>
+          <button className="btn btn-primary">Add Lead</button>
         </div>
 
         {data?.data?.length > 0 ? (
@@ -76,14 +76,21 @@ export default function Leads() {
                   </td>
                   <td>
                     {lead.score ? (
-                      <strong style={{ color: lead.score > 70 ? '#16a34a' : '#d97706' }}>
+                      <span
+                        className={`lead-score ${
+                          lead.score >= 70
+                            ? 'lead-score--strong'
+                            : lead.score >= 40
+                            ? 'lead-score--moderate'
+                            : 'lead-score--caution'
+                        }`}
+                      >
                         {lead.score}/100
-                      </strong>
+                      </span>
                     ) : (
                       <button
-                        className="btn btn-secondary"
+                        className="btn btn-ghost btn-compact"
                         onClick={() => handleScoreLead(lead.id)}
-                        style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}
                       >
                         Score with AI
                       </button>
@@ -96,9 +103,7 @@ export default function Leads() {
                   </td>
                   <td>{new Date(lead.created_at).toLocaleDateString()}</td>
                   <td>
-                    <button className="btn" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}>
-                      Convert
-                    </button>
+                    <button className="btn btn-secondary btn-compact">Convert</button>
                   </td>
                 </tr>
               ))}
