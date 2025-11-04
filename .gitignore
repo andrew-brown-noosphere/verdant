@@ -3,6 +3,8 @@ node_modules/
 .pnp
 .pnp.js
 venv/
+venv*/
+services/api/python/venv*/
 __pycache__/
 *.py[cod]
 *$py.class
